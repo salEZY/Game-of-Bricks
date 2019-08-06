@@ -3,12 +3,12 @@ let ballSpeedX = 5
 let ballY = 75
 let ballSpeedY = 7
 
-const BRICK_W = 100
-const BRICK_H = 50
+const BRICK_W = 80
+const BRICK_H = 20
 const BRICK_GAP = 2
 const BRICK_COLS = 10
-const BRICK_ROWS = 2
-let brickGrid = new Array(BRICK_COLS)
+const BRICK_ROWS = 14
+let brickGrid = new Array(BRICK_COLS * BRICK_ROWS)
 
 const PADDLE_WIDTH = 100
 const PADDLE_THICKNESS = 10
@@ -21,7 +21,7 @@ let mouseY
 let canvas, ctx
 
 const brickReset = () => {
-  for (let i = 0; i < BRICK_COLS; i++) {
+  for (let i = 0; i < BRICK_COLS * BRICK_ROWS; i++) {
     brickGrid[i] = true
   }
 }
@@ -71,6 +71,22 @@ const moveAll = () => {
     ballReset()
   }
 
+  let ballBrickCol = Math.floor(ballX / BRICK_W)
+  let ballBrickRow = Math.floor(ballY / BRICK_H)
+  let brickIndexUnderBall = rowColToArrayIndex(ballBrickCol, ballBrickRow)
+
+  if (
+    ballBrickCol >= 0 &&
+    ballBrickCol < BRICK_COLS &&
+    ballBrickRow >= 0 &&
+    ballBrickRow < BRICK_ROWS
+  ) {
+    if (brickGrid[brickIndexUnderBall]) {
+      brickGrid[brickIndexUnderBall] = false
+      ballSpeedY *= -1
+    }
+  }
+
   let paddleTopEdgeY = canvas.height - PADDLE_BOTTOM_GAP
   let paddleBottomEdgeY = paddleTopEdgeY + PADDLE_THICKNESS
   let paddleLeftEdgeX = paddleX
@@ -89,10 +105,15 @@ const moveAll = () => {
   }
 }
 
+const rowColToArrayIndex = (col, row) => {
+  return col + BRICK_COLS * row
+}
+
 const drawBricks = () => {
   for (let eachRow = 0; eachRow < BRICK_ROWS; eachRow++) {
     for (let eachCol = 0; eachCol < BRICK_COLS; eachCol++) {
-      if (brickGrid[eachCol]) {
+      let arrayIndex = rowColToArrayIndex(eachCol, eachRow)
+      if (brickGrid[arrayIndex]) {
         colorRect(
           BRICK_W * eachCol,
           BRICK_H * eachRow,
@@ -118,9 +139,12 @@ const drawAll = () => {
   )
   drawBricks()
 
-  let mouseBrickCol = mouseX / BRICK_W
-  let mouseBrickRow = mouseX / BRICK_H
-  colorText(`${mouseBrickCol},${mouseBrickRow}`, mouseX, mouseY, 'yellow')
+  // colorText(
+  //   `${mouseBrickCol},${mouseBrickRow} : ${brickIndexUnderMouse}`,
+  //   mouseX,
+  //   mouseY,
+  //   'yellow'
+  // )
 }
 
 const colorRect = (x, y, width, height, color) => {
