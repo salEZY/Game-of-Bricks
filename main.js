@@ -195,13 +195,6 @@ const drawAll = () => {
     'white'
   )
   drawBricks()
-
-  // colorText(
-  //   `${mouseBrickCol},${mouseBrickRow} : ${brickIndexUnderMouse}`,
-  //   mouseX,
-  //   mouseY,
-  //   'yellow'
-  // )
 }
 
 const colorRect = (x, y, width, height, color) => {
