@@ -9,7 +9,7 @@ const BRICK_GAP = 2
 const BRICK_COLS = 10
 const BRICK_ROWS = 14
 let brickGrid = new Array(BRICK_COLS * BRICK_ROWS)
-
+let bricksLeft
 const PADDLE_WIDTH = 100
 const PADDLE_THICKNESS = 10
 const PADDLE_BOTTOM_GAP = 60
@@ -21,8 +21,14 @@ let mouseY
 let canvas, ctx
 
 const brickReset = () => {
-  for (let i = 0; i < BRICK_COLS * BRICK_ROWS; i++) {
+  bricksLeft = 0
+  let i
+  for (i = 0; i < 3 * BRICK_COLS; i++) {
+    brickGrid[i] = false
+  }
+  for (; i < BRICK_COLS * BRICK_ROWS; i++) {
     brickGrid[i] = true
+    bricksLeft++
   }
 }
 
@@ -35,6 +41,7 @@ window.onload = () => {
 
   canvas.addEventListener('mousemove', updateMousePos)
   brickReset()
+  ballReset()
 }
 
 const updateMousePos = event => {
@@ -56,7 +63,7 @@ const ballReset = () => {
   ballY = canvas.height / 2
 }
 
-const moveAll = () => {
+const ballMove = () => {
   ballX += ballSpeedX
   ballY += ballSpeedY
 
@@ -69,8 +76,20 @@ const moveAll = () => {
   }
   if (ballY > canvas.height) {
     ballReset()
+    brickReset()
   }
+}
 
+const isBrickAtColRow = (col, row) => {
+  if (col >= 0 && col < BRICK_COLS && row >= 0 && row < BRICK_ROWS) {
+    let brickIndexUnderCoord = rowColToArrayIndex(col, row)
+    return brickGrid[brickIndexUnderCoord]
+  } else {
+    return false
+  }
+}
+
+const ballBrickHandling = () => {
   let ballBrickCol = Math.floor(ballX / BRICK_W)
   let ballBrickRow = Math.floor(ballY / BRICK_H)
   let brickIndexUnderBall = rowColToArrayIndex(ballBrickCol, ballBrickRow)
@@ -81,12 +100,39 @@ const moveAll = () => {
     ballBrickRow >= 0 &&
     ballBrickRow < BRICK_ROWS
   ) {
-    if (brickGrid[brickIndexUnderBall]) {
+    if (isBrickAtColRow(ballBrickCol, ballBrickRow)) {
       brickGrid[brickIndexUnderBall] = false
-      ballSpeedY *= -1
+      bricksLeft--
+
+      let prevBallX = ballX - ballSpeedX
+      let prevBallY = ballY - ballSpeedY
+      let prevBbrickCol = Math.floor(prevBallX / BRICK_W)
+      let prevBbrickRow = Math.floor(prevBallY / BRICK_H)
+
+      let bothTestsFailed = true
+
+      if (prevBbrickCol != ballBrickCol) {
+        if (isBrickAtColRow(prevBbrickCol, ballBrickRow) == false) {
+          ballSpeedX *= -1
+          bothTestsFailed = false
+        }
+      }
+      if (prevBbrickRow != ballBrickRow) {
+        if (isBrickAtColRow(ballBrickCol, prevBbrickRow) == false) {
+          ballSpeedY *= -1
+          bothTestsFailed = false
+        }
+      }
+
+      if (bothTestsFailed) {
+        ballSpeedX *= -1
+        ballSpeedY *= -1
+      }
     }
   }
+}
 
+const ballPaddleHandling = () => {
   let paddleTopEdgeY = canvas.height - PADDLE_BOTTOM_GAP
   let paddleBottomEdgeY = paddleTopEdgeY + PADDLE_THICKNESS
   let paddleLeftEdgeX = paddleX
@@ -99,10 +145,21 @@ const moveAll = () => {
     ballX < paddleRightEdgeX
   ) {
     ballSpeedY *= -1
+
     let centerPaddleX = paddleX + PADDLE_WIDTH / 2
     let ballDistanceFromPaddleX = ballX - centerPaddleX
     ballSpeedX = ballDistanceFromPaddleX * 0.35
+
+    if (bricksLeft == 0) {
+      brickReset()
+    }
   }
+}
+
+const moveAll = () => {
+  ballMove()
+  ballBrickHandling()
+  ballPaddleHandling()
 }
 
 const rowColToArrayIndex = (col, row) => {
