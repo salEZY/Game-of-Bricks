@@ -223,7 +223,7 @@ const countDown = (count, miliseconds) => {
   setTimeout(() => {
     ctx.fillStyle = 'black'
     ctx.fillRect(0, 0, canvas.width, canvas.height)
-    ctx.fillStyle = 'red'
+    ctx.fillStyle = 'white'
     ctx.font = '50px Verdana'
     ctx.fillText(`${count}`, canvas.width / 2 - 25, canvas.height / 2)
   }, miliseconds)
