@@ -1,0 +1,18 @@
+body {
+  background: black;
+}
+div {
+  width: 100%;
+  text-align: center;
+}
+h1 {
+  font-size: 60px;
+  margin: 40px auto;
+  color: blue;
+}
+
+canvas {
+  margin: 20px auto;
+  border: 5px solid blue;
+  border-radius: 5px;
+}

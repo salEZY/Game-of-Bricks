@@ -19,6 +19,7 @@ let mouseX
 let mouseY
 
 let canvas, ctx
+let fps = 30
 
 const brickReset = () => {
   bricksLeft = 0
@@ -36,8 +37,12 @@ window.onload = () => {
   canvas = document.querySelector('#gameCanvas')
   ctx = canvas.getContext('2d')
 
-  let fps = 30
-  setInterval(updateAll, 1000 / fps)
+  countDown(3, 1000)
+  countDown(2, 2000)
+  countDown(1, 3000)
+  setTimeout(() => {
+    setInterval(updateAll, 1000 / fps)
+  }, 4000)
 
   canvas.addEventListener('mousemove', updateMousePos)
   brickReset()
@@ -212,4 +217,14 @@ const drawCircle = (x, y, radius, color) => {
 const colorText = (words, x, y, color) => {
   ctx.fillStyle = color
   ctx.fillText(words, x, y)
+}
+
+const countDown = (count, miliseconds) => {
+  setTimeout(() => {
+    ctx.fillStyle = 'black'
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
+    ctx.fillStyle = 'red'
+    ctx.font = '50px Verdana'
+    ctx.fillText(`${count}`, canvas.width / 2 - 25, canvas.height / 2)
+  }, miliseconds)
 }
