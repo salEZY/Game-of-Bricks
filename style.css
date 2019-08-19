@@ -9,6 +9,7 @@ h1 {
   font-size: 60px;
   margin: 40px auto;
   color: blue;
+  text-shadow: 3px 3px 2px whitesmoke;
 }
 
 canvas {
