@@ -224,7 +224,7 @@ const countDown = (count, miliseconds) => {
     ctx.fillStyle = 'black'
     ctx.fillRect(0, 0, canvas.width, canvas.height)
     ctx.fillStyle = 'white'
-    ctx.font = '50px Verdana'
+    ctx.font = '80px Verdana'
     ctx.fillText(`${count}`, canvas.width / 2 - 25, canvas.height / 2)
   }, miliseconds)
 }
