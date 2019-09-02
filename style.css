@@ -1,12 +1,14 @@
 body {
   background: black;
 }
+
 div {
   width: 100%;
   text-align: center;
 }
+
 h1 {
-  font-family: 'impact';
+  font-family: Impact;
   font-size: 60px;
   letter-spacing: 3px;
   margin: 40px auto;
